@@ -64,7 +64,7 @@
         <!-- 财管课程进度条 -->
         <div class="course-progress-section" id="courseProgressSection">
             <button class="toggle-btn" onclick="toggleCourseProgress()">隐藏课程进度</button>
-            <h3>📚 财管课程进度</h3>
+            <h3>📚 会计课程进度</h3>
             <div style="font-size: 16px; color: #666; margin-bottom: 10px;">
                 已学 <span id="learnedChapters" style="font-weight: bold; color: #ff6b6b;">121</span> / 总共 <span style="font-weight: bold;">161</span> 章
             </div>
@@ -90,14 +90,14 @@
             <button class="editor-btn" onclick="toggleEditor()">编辑今日计划（宁宝自由权）</button>
             <div class="editor-panel" id="editorPanel">
                 <label>📚 学习必做任务</label>
-                <textarea id="studyTasks">1. 财管听课 2-2.5 章（每章约 1 小时）
+                <textarea id="studyTasks">1. 会计听课 2-3 章（每章约 1 小时）
 2. 财管习题 对应章节练习（每章 0.5-1 小时）
 3. 六级保持 30 分钟（听力/阅读轮换）</textarea>
                 <label>🏠 生活必做任务</label>
                 <textarea id="lifeTasks">1. 洗衣服/收拾房间（选 1 项）
 2. 好好吃饭 + 休息（必须！）</textarea>
                 <label>✨ 备选池（无限·随缘完成）</label>
-                <textarea id="optionalTasks">- 额外财管复习 / 错题整理
+                <textarea id="optionalTasks">- 额外会计复习 / 错题整理
 - 六级作文 / 翻译练习
 - 导师任务（白天不定时）
 - 其他琐事</textarea>
@@ -231,9 +231,9 @@
             optionalTasks = plan.optional;
             encouragementText = plan.encouragement;
         } else {
-            studyTasks = "1. 财管听课 2-2.5 章（每章约 1 小时）\n2. 财管习题 对应章节练习（每章 0.5-1 小时）\n3. 六级保持 30 分钟（听力/阅读轮换）";
+            studyTasks = "1. 会计听课 2-2.5 章（每章约 1 小时）\n2. 会计习题 对应章节练习（每章 0.5-1 小时）\n3. 六级保持 30 分钟（听力/阅读轮换）";
             lifeTasks = "1. 洗衣服/收拾房间（选 1 项）\n2. 好好吃饭 + 休息（必须！）";
-            optionalTasks = "- 额外财管复习 / 错题整理\n- 六级作文 / 翻译练习\n- 导师任务（白天不定时）\n- 其他琐事";
+            optionalTasks = "- 额外会计复习 / 错题整理\n- 六级作文 / 翻译练习\n- 导师任务（白天不定时）\n- 其他琐事";
             encouragementText = "宁宁真棒！完成任意任务就夸夸自己，你超厉害的～";
         }
         
@@ -334,7 +334,7 @@
         
         function emergencyMode() {
             if (confirm('🌸 宁宝应急模式：\n\n今天只做 10-20 分钟复习，其余时间休息。\n\n宁宁开心最重要！\n\n确定启用吗？')) {
-                alert('✅ 已启用！宁宝今天只需翻看课本 10-20 分钟，然后好好休息～');
+                alert('✅ 已启用！宁宝今天只需翻看网课 10-20 分钟，然后好好休息～');
             }
         }
         
