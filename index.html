@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>宁宝 CPA</title>
+    <style>
+        body { font-family: Arial; background: linear-gradient(135deg, #667eea, #764ba2); padding: 20px; margin: 0; }
+        .container { max-width: 800px; margin: 0 auto; background: white; border-radius: 20px; padding: 30px; }
+        h1 { text-align: center; color: #667eea; margin-bottom: 10px; }
+        .subtitle { text-align: center; color: #999; margin-bottom: 20px; font-size: 14px; }
+        .date { background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 15px; border-radius: 10px; text-align: center; margin-bottom: 20px; font-size: 18px; font-weight: bold; }
+        
+        .editor { background: #fff3cd; border-left: 4px solid #ffc107; padding: 20px; border-radius: 10px; margin-bottom: 20px; }
+        .editor-btn { background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; padding: 12px 25px; border-radius: 10px; cursor: pointer; width: 100%; font-size: 16px; margin-bottom: 15px; }
+        .editor-panel { display: none; background: white; padding: 15px; border-radius: 10px; margin-top: 15px; }
+        .editor-panel.active { display: block; }
+        .editor-panel textarea { width: 100%; padding: 10px; border: 2px solid #e9ecef; border-radius: 8px; margin-bottom: 10px; min-height: 60px; font-size: 14px; }
+        .editor-panel button { background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-right: 10px; }
+        .cancel-btn { background: #6c757d !important; }
+        
+        .task { background: #f8f9fa; padding: 12px; margin: 8px 0; border-radius: 10px; display: flex; align-items: center; transition: all 0.3s; }
+        .task:hover { background: #e9ecef; transform: translateX(5px); }
+        .task.completed { background: #d4edda; opacity: 0.7; }
+        .task.completed span { text-decoration: line-through; color: #999; }
+        .task input { margin-right: 15px; width: 20px; height: 20px; cursor: pointer; }
+        .tag { padding: 4px 10px; border-radius: 15px; font-size: 12px; font-weight: bold; margin-left: 10px; }
+        .tag-study { background: #e3f2fd; color: #1976d2; }
+        .tag-life { background: #fff3e0; color: #f57c00; }
+        .tag-optional { background: #f3e5f5; color: #7b1fa2; }
+        
+        .progress-section { background: linear-gradient(135deg, #a8edea, #fed6e3); padding: 20px; border-radius: 15px; margin: 20px 0; text-align: center; }
+        .progress-bar { background: #e9ecef; border-radius: 10px; height: 30px; overflow: hidden; margin-top: 15px; }
+        .progress-fill { background: linear-gradient(135deg, #667eea, #764ba2); height: 100%; transition: width 0.3s; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; }
+        .flower { font-size: 30px; margin: 10px; }
+        
+        .section-title { font-size: 20px; font-weight: bold; color: #333; margin: 20px 0 10px; border-left: 4px solid #667eea; padding-left: 10px; }
+        .tips { background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin-top: 20px; border-radius: 5px; }
+        .rest { background: linear-gradient(135deg, #a8edea, #fed6e3); padding: 30px; border-radius: 15px; text-align: center; margin-bottom: 20px; display: none; }
+        .stats { display: flex; justify-content: space-around; padding: 15px; background: #f8f9fa; border-radius: 10px; margin-top: 20px; }
+        .stat-item { text-align: center; }
+        .stat-number { font-size: 24px; font-weight: bold; color: #667eea; }
+        .stat-label { font-size: 12px; color: #999; margin-top: 5px; }
+        .emergency-btn { background: #ff6b6b; color: white; border: none; padding: 15px; border-radius: 10px; cursor: pointer; width: 100%; font-size: 16px; font-weight: bold; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌸 宁宝专属学习锚点</h1>
+        <p class="subtitle">弹性制 · 不焦虑 · 随心所欲 · 劳逸结合</p>
+        <div class="date" id="date"></div>
+        
+        <div class="progress-section">
+            <div class="flower" id="flowerProgress"></div>
+            <div style="font-size: 18px; font-weight: bold; color: #667eea; margin: 10px 0;" id="encouragement">宁宁真棒！</div>
+            <div style="font-size: 14px; color: #666;" id="progressDetail">已学习 121 章</div>
+            <div class="progress-bar"><div class="progress-fill" id="progress" style="width:0%">0%</div></div>
+        </div>
+        
+        <div class="editor">
+            <div style="font-size: 18px; font-weight: bold; color: #856404; margin-bottom: 15px;">✏️ 今天想怎么学，宁宝说了算！</div>
+            <button class="editor-btn" onclick="toggleEditor()">编辑今日计划（宁宝自由权）</button>
+            <div class="editor-panel" id="editorPanel">
+                <label>📚 学习必做任务</label>
+                <textarea id="studyTasks">1. 会计听课 2-2.5 章（每章约 1 小时）
+2. 会计习题 对应章节练习（每章 0.5-1 小时）
+3. 六级保持 30 分钟（听力/阅读轮换）</textarea>
+                <label>🏠 生活必做任务</label>
+                <textarea id="lifeTasks">1. 洗衣服/收拾房间（选 1 项）
+2. 好好吃饭 + 休息（必须！）</textarea>
+                <label>✨ 备选池（无限·随缘完成）</label>
+                <textarea id="optionalTasks">- 额外财管复习 / 错题整理
+- 六级作文 / 翻译练习
+- 导师任务（白天不定时）
+- 其他琐事</textarea>
+                <label>💖 今日鼓励语</label>
+                <textarea id="encouragementText">宁宁真棒！完成任意任务就夸夸自己，你超厉害的～</textarea>
+                <button onclick="saveCustomPlan()">💾 保存今日计划</button>
+                <button class="cancel-btn" onclick="toggleEditor()">取消</button>
+            </div>
+        </div>
+        
+        <div class="rest" id="rest">
+            <h2>🎉 今天是休息日！</h2>
+            <p>宁宝好好放松，不学习也没关系～</p>
+            <button class="editor-btn" onclick="document.getElementById('rest').style.display='none';">💪 我就是要学习</button>
+        </div>
+        
+        <div id="tasks">
+            <div class="section-title"> 学习必做（今日核心）</div>
+            <div id="studyList"></div>
+            
+            <div class="section-title"> 生活必做（最多 2 项）</div>
+            <div id="lifeList"></div>
+            
+            <div class="section-title">✨ 备选池（无限·随缘完成）</div>
+            <div id="optionalList"></div>
+            
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="completedCount">0</div>
+                    <div class="stat-label">已完成</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="totalCount">5</div>
+                    <div class="stat-label">必做任务</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="studyChapters">121</div>
+                    <div class="stat-label">已学章节</div>
+                </div>
+            </div>
+            
+            <div class="tips">
+                <strong>💖 宁宝小贴士：</strong><br>
+                <span id="tip1">宁宁真棒！完成任意任务就夸夸自己！</span><br>
+                宁宝情绪不好就休息，开心最重要！<br>
+                不要看时间，按自己的状态来！
+            </div>
+            
+            <button class="emergency-btn" onclick="emergencyMode()">🆘 今天状态不好？点击启用应急模式</button>
+        </div>
+    </div>
+    
+    <script>
+        const encouragements = [
+            '宁宁真棒！今天的你也在发光✨',
+            '宁宝真棒！继续加油哦～',
+            '宁宁超厉害的！每一章都是成长🌸',
+            '宁宝最棒了！坚持到现在真的辛苦了～',
+            '宁宁真棒！你比昨天更优秀了！',
+            '宁宝真棒！CPA 证书在向你招手！'
+        ];
+        
+        // 显示日期
+        const now = new Date();
+        document.getElementById('date').textContent = now.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' });
+        
+        // 判断休息日
+        const day = now.getDay();
+        if (day === 0 || day === 2) {
+            document.getElementById('rest').style.display = 'block';
+        }
+        
+        // 加载自定义计划
+        const today = now.toDateString();
+        const saved = localStorage.getItem('ningbao_custom_' + today);
+        let studyTasks, lifeTasks, optionalTasks, encouragementText;
+        
+        if (saved) {
+            const plan = JSON.parse(saved);
+            studyTasks = plan.study;
+            lifeTasks = plan.life;
+            optionalTasks = plan.optional;
+            encouragementText = plan.encouragement;
+        } else {
+            studyTasks = "1. 会计听课 2-2.5 章（每章约 1 小时）\n2. 会计习题 对应章节练习（每章 0.5-1 小时）\n3. 六级保持 30 分钟（听力/阅读轮换）";
+            lifeTasks = "1. 洗衣服/收拾房间（选 1 项）\n2. 好好吃饭 + 休息（必须！）";
+            optionalTasks = "- 额外会计复习 / 错题整理\n- 六级作文 / 翻译练习\n- 导师任务（白天不定时）\n- 其他琐事";
+            encouragementText = "宁宁真棒！完成任意任务就夸夸自己，你超厉害的～";
+        }
+        
+        function renderTasks() {
+            // 学习任务
+            const studyList = document.getElementById('studyList');
+            studyList.innerHTML = '';
+            studyTasks.split('\n').filter(t => t.trim()).forEach(task => {
+                studyList.innerHTML += '<div class="task"><input type="checkbox" data-type="required" onchange="updateProgress()"><span>' + task + '</span><span class="tag tag-study">必做</span></div>';
+            });
+            
+            // 生活任务
+            const lifeList = document.getElementById('lifeList');
+            lifeList.innerHTML = '';
+            lifeTasks.split('\n').filter(t => t.trim()).forEach(task => {
+                lifeList.innerHTML += '<div class="task"><input type="checkbox" data-type="required" onchange="updateProgress()"><span>' + task + '</span><span class="tag tag-life">必做</span></div>';
+            });
+            
+            // 备选任务
+            const optionalList = document.getElementById('optionalList');
+            optionalList.innerHTML = '';
+            optionalTasks.split('\n').filter(t => t.trim()).forEach(task => {
+                optionalList.innerHTML += '<div class="task"><input type="checkbox" data-type="optional" onchange="updateProgress()"><span>' + task.replace(/^- /, '') + '</span><span class="tag tag-optional">选做</span></div>';
+            });
+            
+            // 鼓励语
+            document.getElementById('tip1').textContent = encouragementText;
+            
+            // 加载保存的状态
+            loadProgress();
+        }
+        
+        function toggleEditor() {
+            document.getElementById('editorPanel').classList.toggle('active');
+        }
+        
+        function saveCustomPlan() {
+            studyTasks = document.getElementById('studyTasks').value;
+            lifeTasks = document.getElementById('lifeTasks').value;
+            optionalTasks = document.getElementById('optionalTasks').value;
+            encouragementText = document.getElementById('encouragementText').value;
+            
+            localStorage.setItem('ningbao_custom_' + today, JSON.stringify({
+                study: studyTasks,
+                life: lifeTasks,
+                optional: optionalTasks,
+                encouragement: encouragementText
+            }));
+            
+            renderTasks();
+            toggleEditor();
+            alert('✅ 宁宝今日计划已保存！');
+        }
+        
+        function updateProgress() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            const required = document.querySelectorAll('input[type="checkbox"][data-type="required"]');
+            
+            let checkedRequired = 0;
+            let checkedOptional = 0;
+            
+            required.forEach(cb => {
+                if (cb.checked) {
+                    checkedRequired++;
+                    cb.parentElement.classList.add('completed');
+                } else {
+                    cb.parentElement.classList.remove('completed');
+                }
+            });
+            
+            checkboxes.forEach(cb => {
+                if (cb.checked && cb.dataset.type === 'optional') {
+                    checkedOptional++;
+                    cb.parentElement.classList.add('completed');
+                } else if (cb.dataset.type === 'optional') {
+                    cb.parentElement.classList.remove('completed');
+                }
+            });
+            
+            // 进度条只计算必做任务
+            const percent = Math.round((checkedRequired / required.length) * 100);
+            document.getElementById('progress').style.width = percent + '%';
+            document.getElementById('progress').textContent = percent + '%';
+            document.getElementById('completedCount').textContent = checkedRequired + checkedOptional;
+            document.getElementById('totalCount').textContent = required.length;
+            
+            // 保存状态
+            const state = Array.from(checkboxes).map(cb => ({ checked: cb.checked, type: cb.dataset.type }));
+            localStorage.setItem('ningbao_state_' + today, JSON.stringify(state));
+        }
+        
+        function loadProgress() {
+            const saved = localStorage.getItem('ningbao_state_' + today);
+            if (saved) {
+                const state = JSON.parse(saved);
+                const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+                checkboxes.forEach((cb, i) => {
+                    if (state[i] && state[i].checked) {
+                        cb.checked = true;
+                    }
+                });
+            }
+            updateProgress();
+            
+            // 加载章节进度
+            const chapters = localStorage.getItem('ningbao_chapters');
+            if (chapters) {
+                document.getElementById('studyChapters').textContent = chapters;
+                updateFlowerProgress(parseInt(chapters));
+            }
+        }
+        
+        function updateFlowerProgress(chapters) {
+            const flowerContainer = document.getElementById('flowerProgress');
+            flowerContainer.innerHTML = '';
+            const flowerCount = Math.min(Math.floor(chapters / 10), 6);
+            const flowers = ['🌱', '🌿', '🌺', '🌼', '🌹', '🌷'];
+            for (let i = 0; i < flowerCount; i++) {
+                flowerContainer.innerHTML += '<span class="flower">' + flowers[i] + '</span>';
+            }
+            document.getElementById('encouragement').textContent = encouragements[Math.floor(Math.random() * encouragements.length)];
+            document.getElementById('progressDetail').textContent = '已学习 ' + chapters + ' 章 / 目标 161 章';
+        }
+        
+        function emergencyMode() {
+            if (confirm('🌸 宁宝应急模式：\n\n今天只做 10-20 分钟复习，其余时间休息。\n\n宁宁开心最重要！\n\n确定启用吗？')) {
+                alert('✅ 已启用！宁宝今天只需翻看课本 10-20 分钟，然后好好休息～');
+            }
+        }
+        
+        // 添加章节更新按钮
+        setTimeout(() => {
+            const stats = document.querySelector('.stats');
+            const btn = document.createElement('div');
+            btn.style.cssText = 'text-align:center;margin-top:15px;';
+            btn.innerHTML = '<button onclick="addChapters()" style="background:#667eea;color:white;border:none;padding:8px 20px;border-radius:8px;cursor:pointer;">📚 更新已学章节</button>';
+            stats.appendChild(btn);
+        }, 100);
+        
+        function addChapters() {
+            const current = parseInt(document.getElementById('studyChapters').textContent);
+            const add = prompt('宁宝当前已学习 ' + current + ' 章\n输入今天学习的章节数：', '2');
+            if (add && !isNaN(add)) {
+                const newChapters = current + parseInt(add);
+                document.getElementById('studyChapters').textContent = newChapters;
+                localStorage.setItem('ningbao_chapters', newChapters.toString());
+                updateFlowerProgress(newChapters);
+                alert('🎉 恭喜宁宝！已更新为 ' + newChapters + ' 章！');
+            }
+        }
+        
+        renderTasks();
+    </script>
+</body>
+</html>
