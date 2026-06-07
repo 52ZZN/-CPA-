@@ -33,6 +33,15 @@
         .progress-fill { background: linear-gradient(135deg, #667eea, #764ba2); height: 100%; transition: width 0.3s; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; }
         .flower { font-size: 30px; margin: 10px; }
         
+        /* 财管课程进度条 */
+        .course-progress-section { background: linear-gradient(135deg, #ffecd2, #fcb69f); padding: 20px; border-radius: 15px; margin: 20px 0; text-align: center; }
+        .course-progress-section h3 { color: #d35400; margin-bottom: 15px; }
+        .course-progress-bar { background: #e9ecef; border-radius: 10px; height: 35px; overflow: hidden; margin-top: 15px; }
+        .course-progress-fill { background: linear-gradient(135deg, #ff9a9e, #fecfef); height: 100%; transition: width 0.5s; display: flex; align-items: center; justify-content: center; color: #d35400; font-weight: bold; font-size: 16px; }
+        .chapter-input { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 15px; }
+        .chapter-input input { width: 80px; padding: 8px; border: 2px solid #fcb69f; border-radius: 8px; text-align: center; font-size: 16px; }
+        .chapter-input button { background: #ff6b6b; color: white; border: none; padding: 8px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; }
+        
         .section-title { font-size: 20px; font-weight: bold; color: #333; margin: 20px 0 10px; border-left: 4px solid #667eea; padding-left: 10px; }
         .tips { background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin-top: 20px; border-radius: 5px; }
         .rest { background: linear-gradient(135deg, #a8edea, #fed6e3); padding: 30px; border-radius: 15px; text-align: center; margin-bottom: 20px; display: none; }
@@ -41,6 +50,9 @@
         .stat-number { font-size: 24px; font-weight: bold; color: #667eea; }
         .stat-label { font-size: 12px; color: #999; margin-top: 5px; }
         .emergency-btn { background: #ff6b6b; color: white; border: none; padding: 15px; border-radius: 10px; cursor: pointer; width: 100%; font-size: 16px; font-weight: bold; margin-top: 20px; }
+        .toggle-btn { background: transparent; border: 2px solid #667eea; color: #667eea; padding: 5px 15px; border-radius: 20px; font-size: 12px; cursor: pointer; float: right; }
+        .toggle-btn:hover { background: #667eea; color: white; }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
@@ -49,10 +61,27 @@
         <p class="subtitle">弹性制 · 不焦虑 · 随心所欲 · 劳逸结合</p>
         <div class="date" id="date"></div>
         
-        <div class="progress-section">
+        <!-- 财管课程进度条 -->
+        <div class="course-progress-section" id="courseProgressSection">
+            <button class="toggle-btn" onclick="toggleCourseProgress()">隐藏课程进度</button>
+            <h3>📚 财管课程进度</h3>
+            <div style="font-size: 16px; color: #666; margin-bottom: 10px;">
+                已学 <span id="learnedChapters" style="font-weight: bold; color: #ff6b6b;">121</span> / 总共 <span style="font-weight: bold;">161</span> 章
+            </div>
+            <div class="course-progress-bar">
+                <div class="course-progress-fill" id="courseProgressFill" style="width: 75%">75%</div>
+            </div>
+            <div class="chapter-input">
+                <input type="number" id="chapterInput" placeholder="章节数" min="0" max="161">
+                <button onclick="updateChapterProgress()">📚 更新进度</button>
+            </div>
+        </div>
+        
+        <!-- 每日任务进度 -->
+        <div class="progress-section" id="dailyProgressSection">
+            <button class="toggle-btn" onclick="toggleDailyProgress()">隐藏任务进度</button>
             <div class="flower" id="flowerProgress"></div>
             <div style="font-size: 18px; font-weight: bold; color: #667eea; margin: 10px 0;" id="encouragement">宁宁真棒！</div>
-            <div style="font-size: 14px; color: #666;" id="progressDetail">已学习 121 章</div>
             <div class="progress-bar"><div class="progress-fill" id="progress" style="width:0%">0%</div></div>
         </div>
         
@@ -61,8 +90,8 @@
             <button class="editor-btn" onclick="toggleEditor()">编辑今日计划（宁宝自由权）</button>
             <div class="editor-panel" id="editorPanel">
                 <label>📚 学习必做任务</label>
-                <textarea id="studyTasks">1. 会计听课 2-2.5 章（每章约 1 小时）
-2. 会计习题 对应章节练习（每章 0.5-1 小时）
+                <textarea id="studyTasks">1. 财管听课 2-2.5 章（每章约 1 小时）
+2. 财管习题 对应章节练习（每章 0.5-1 小时）
 3. 六级保持 30 分钟（听力/阅读轮换）</textarea>
                 <label>🏠 生活必做任务</label>
                 <textarea id="lifeTasks">1. 洗衣服/收拾房间（选 1 项）
@@ -86,10 +115,10 @@
         </div>
         
         <div id="tasks">
-            <div class="section-title"> 学习必做（今日核心）</div>
+            <div class="section-title">📚 学习必做（今日核心）</div>
             <div id="studyList"></div>
             
-            <div class="section-title"> 生活必做（最多 2 项）</div>
+            <div class="section-title">🏠 生活必做（最多 2 项）</div>
             <div id="lifeList"></div>
             
             <div class="section-title">✨ 备选池（无限·随缘完成）</div>
@@ -105,8 +134,8 @@
                     <div class="stat-label">必做任务</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-number" id="studyChapters">121</div>
-                    <div class="stat-label">已学章节</div>
+                    <div class="stat-number" id="optionalCount">0</div>
+                    <div class="stat-label">备选完成</div>
                 </div>
             </div>
             
@@ -122,6 +151,7 @@
     </div>
     
     <script>
+        const TOTAL_CHAPTERS = 161;
         const encouragements = [
             '宁宁真棒！今天的你也在发光✨',
             '宁宝真棒！继续加油哦～',
@@ -141,10 +171,58 @@
             document.getElementById('rest').style.display = 'block';
         }
         
-        // 加载自定义计划
         const today = now.toDateString();
-        const saved = localStorage.getItem('ningbao_custom_' + today);
+        
+        // 加载财管课程进度
+        function loadCourseProgress() {
+            let learned = localStorage.getItem('course_learned');
+            if (!learned) learned = '121';
+            document.getElementById('learnedChapters').textContent = learned;
+            const percent = Math.round((parseInt(learned) / TOTAL_CHAPTERS) * 100);
+            document.getElementById('courseProgressFill').style.width = percent + '%';
+            document.getElementById('courseProgressFill').textContent = percent + '%';
+        }
+        
+        function updateChapterProgress() {
+            const input = document.getElementById('chapterInput');
+            const chapters = parseInt(input.value);
+            if (chapters && chapters >= 0 && chapters <= TOTAL_CHAPTERS) {
+                localStorage.setItem('course_learned', chapters.toString());
+                loadCourseProgress();
+                alert(' 宁宝已学到第 ' + chapters + ' 章！继续加油～');
+                input.value = '';
+            } else {
+                alert('请输入 0-161 之间的数字哦～');
+            }
+        }
+        
+        function toggleCourseProgress() {
+            const section = document.getElementById('courseProgressSection');
+            const btn = section.querySelector('.toggle-btn');
+            if (section.style.display === 'none') {
+                section.style.display = 'block';
+                btn.textContent = '隐藏课程进度';
+            } else {
+                section.style.display = 'none';
+                btn.textContent = '显示课程进度';
+            }
+        }
+        
+        function toggleDailyProgress() {
+            const section = document.getElementById('dailyProgressSection');
+            const btn = section.querySelector('.toggle-btn');
+            if (section.style.display === 'none') {
+                section.style.display = 'block';
+                btn.textContent = '隐藏任务进度';
+            } else {
+                section.style.display = 'none';
+                btn.textContent = '显示任务进度';
+            }
+        }
+        
+        // 加载自定义计划
         let studyTasks, lifeTasks, optionalTasks, encouragementText;
+        const saved = localStorage.getItem('ningbao_custom_' + today);
         
         if (saved) {
             const plan = JSON.parse(saved);
@@ -153,38 +231,32 @@
             optionalTasks = plan.optional;
             encouragementText = plan.encouragement;
         } else {
-            studyTasks = "1. 会计听课 2-2.5 章（每章约 1 小时）\n2. 会计习题 对应章节练习（每章 0.5-1 小时）\n3. 六级保持 30 分钟（听力/阅读轮换）";
+            studyTasks = "1. 财管听课 2-2.5 章（每章约 1 小时）\n2. 财管习题 对应章节练习（每章 0.5-1 小时）\n3. 六级保持 30 分钟（听力/阅读轮换）";
             lifeTasks = "1. 洗衣服/收拾房间（选 1 项）\n2. 好好吃饭 + 休息（必须！）";
-            optionalTasks = "- 额外会计复习 / 错题整理\n- 六级作文 / 翻译练习\n- 导师任务（白天不定时）\n- 其他琐事";
+            optionalTasks = "- 额外财管复习 / 错题整理\n- 六级作文 / 翻译练习\n- 导师任务（白天不定时）\n- 其他琐事";
             encouragementText = "宁宁真棒！完成任意任务就夸夸自己，你超厉害的～";
         }
         
         function renderTasks() {
-            // 学习任务
             const studyList = document.getElementById('studyList');
             studyList.innerHTML = '';
             studyTasks.split('\n').filter(t => t.trim()).forEach(task => {
                 studyList.innerHTML += '<div class="task"><input type="checkbox" data-type="required" onchange="updateProgress()"><span>' + task + '</span><span class="tag tag-study">必做</span></div>';
             });
             
-            // 生活任务
             const lifeList = document.getElementById('lifeList');
             lifeList.innerHTML = '';
             lifeTasks.split('\n').filter(t => t.trim()).forEach(task => {
                 lifeList.innerHTML += '<div class="task"><input type="checkbox" data-type="required" onchange="updateProgress()"><span>' + task + '</span><span class="tag tag-life">必做</span></div>';
             });
             
-            // 备选任务
             const optionalList = document.getElementById('optionalList');
             optionalList.innerHTML = '';
             optionalTasks.split('\n').filter(t => t.trim()).forEach(task => {
                 optionalList.innerHTML += '<div class="task"><input type="checkbox" data-type="optional" onchange="updateProgress()"><span>' + task.replace(/^- /, '') + '</span><span class="tag tag-optional">选做</span></div>';
             });
             
-            // 鼓励语
             document.getElementById('tip1').textContent = encouragementText;
-            
-            // 加载保存的状态
             loadProgress();
         }
         
@@ -235,14 +307,13 @@
                 }
             });
             
-            // 进度条只计算必做任务
             const percent = Math.round((checkedRequired / required.length) * 100);
             document.getElementById('progress').style.width = percent + '%';
             document.getElementById('progress').textContent = percent + '%';
             document.getElementById('completedCount').textContent = checkedRequired + checkedOptional;
             document.getElementById('totalCount').textContent = required.length;
+            document.getElementById('optionalCount').textContent = checkedOptional;
             
-            // 保存状态
             const state = Array.from(checkboxes).map(cb => ({ checked: cb.checked, type: cb.dataset.type }));
             localStorage.setItem('ningbao_state_' + today, JSON.stringify(state));
         }
@@ -259,25 +330,6 @@
                 });
             }
             updateProgress();
-            
-            // 加载章节进度
-            const chapters = localStorage.getItem('ningbao_chapters');
-            if (chapters) {
-                document.getElementById('studyChapters').textContent = chapters;
-                updateFlowerProgress(parseInt(chapters));
-            }
-        }
-        
-        function updateFlowerProgress(chapters) {
-            const flowerContainer = document.getElementById('flowerProgress');
-            flowerContainer.innerHTML = '';
-            const flowerCount = Math.min(Math.floor(chapters / 10), 6);
-            const flowers = ['🌱', '🌿', '🌺', '🌼', '🌹', '🌷'];
-            for (let i = 0; i < flowerCount; i++) {
-                flowerContainer.innerHTML += '<span class="flower">' + flowers[i] + '</span>';
-            }
-            document.getElementById('encouragement').textContent = encouragements[Math.floor(Math.random() * encouragements.length)];
-            document.getElementById('progressDetail').textContent = '已学习 ' + chapters + ' 章 / 目标 161 章';
         }
         
         function emergencyMode() {
@@ -286,27 +338,8 @@
             }
         }
         
-        // 添加章节更新按钮
-        setTimeout(() => {
-            const stats = document.querySelector('.stats');
-            const btn = document.createElement('div');
-            btn.style.cssText = 'text-align:center;margin-top:15px;';
-            btn.innerHTML = '<button onclick="addChapters()" style="background:#667eea;color:white;border:none;padding:8px 20px;border-radius:8px;cursor:pointer;">📚 更新已学章节</button>';
-            stats.appendChild(btn);
-        }, 100);
-        
-        function addChapters() {
-            const current = parseInt(document.getElementById('studyChapters').textContent);
-            const add = prompt('宁宝当前已学习 ' + current + ' 章\n输入今天学习的章节数：', '2');
-            if (add && !isNaN(add)) {
-                const newChapters = current + parseInt(add);
-                document.getElementById('studyChapters').textContent = newChapters;
-                localStorage.setItem('ningbao_chapters', newChapters.toString());
-                updateFlowerProgress(newChapters);
-                alert('🎉 恭喜宁宝！已更新为 ' + newChapters + ' 章！');
-            }
-        }
-        
+        // 初始化
+        loadCourseProgress();
         renderTasks();
     </script>
 </body>
