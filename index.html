@@ -10,6 +10,13 @@
         .subtitle { text-align: center; color: #999; margin-bottom: 20px; font-size: 14px; }
         .date { background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 15px; border-radius: 10px; text-align: center; margin-bottom: 20px; font-size: 18px; font-weight: bold; }
         
+        .plan-section { background: linear-gradient(135deg, #e0c3fc, #8ec5fc); padding: 20px; border-radius: 15px; margin-bottom: 20px; }
+        .plan-title { font-size: 18px; font-weight: bold; color: #5a3d7c; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .plan-content { background: white; padding: 15px; border-radius: 10px; }
+        .plan-item { margin: 10px 0; padding: 10px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #8ec5fc; }
+        .plan-item strong { color: #5a3d7c; }
+        .plan-note { font-size: 13px; color: #666; margin-top: 5px; font-style: italic; }
+        
         .editor { background: #fff3cd; border-left: 4px solid #ffc107; padding: 20px; border-radius: 10px; margin-bottom: 20px; }
         .editor-btn { background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; padding: 12px 25px; border-radius: 10px; cursor: pointer; width: 100%; font-size: 16px; margin-bottom: 15px; }
         .editor-panel { display: none; background: white; padding: 15px; border-radius: 10px; margin-top: 15px; }
@@ -33,7 +40,6 @@
         .progress-fill { background: linear-gradient(135deg, #667eea, #764ba2); height: 100%; transition: width 0.3s; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; }
         .flower { font-size: 30px; margin: 10px; }
         
-        /* 财管课程进度条 */
         .course-progress-section { background: linear-gradient(135deg, #ffecd2, #fcb69f); padding: 20px; border-radius: 15px; margin: 20px 0; text-align: center; }
         .course-progress-section h3 { color: #d35400; margin-bottom: 15px; }
         .course-progress-bar { background: #e9ecef; border-radius: 10px; height: 35px; overflow: hidden; margin-top: 15px; }
@@ -53,6 +59,8 @@
         .toggle-btn { background: transparent; border: 2px solid #667eea; color: #667eea; padding: 5px 15px; border-radius: 20px; font-size: 12px; cursor: pointer; float: right; }
         .toggle-btn:hover { background: #667eea; color: white; }
         .hidden { display: none; }
+        .plan-edit-btn { background: #8ec5fc; color: #5a3d7c; border: none; padding: 6px 15px; border-radius: 20px; cursor: pointer; font-size: 13px; font-weight: bold; }
+        .plan-edit-btn:hover { background: #5a3d7c; color: white; }
     </style>
 </head>
 <body>
@@ -61,10 +69,46 @@
         <p class="subtitle">弹性制 · 不焦虑 · 随心所欲 · 劳逸结合</p>
         <div class="date" id="date"></div>
         
+        <!-- 今日计划 -->
+        <div class="plan-section" id="planSection">
+            <div class="plan-title">
+                <span>📋 今日学习计划</span>
+                <button class="plan-edit-btn" onclick="openPlanEditor()">✏️ 编辑计划</button>
+            </div>
+            <div class="plan-content" id="planContent">
+                <div class="plan-item">
+                    <strong>📚 财管</strong>：<span id="planStudy">第 122-124 章（共 3 章）</span>
+                    <div class="plan-note">💡 课长课短都算完成，完成计划就是胜利！</div>
+                </div>
+                <div class="plan-item">
+                    <strong>📝 六级</strong>：<span id="planEnglish">听力练习 30 分钟</span>
+                    <div class="plan-note">💡 6.18 考完就删除这项</div>
+                </div>
+                <div class="plan-item">
+                    <strong>🏠 生活</strong>：<span id="planLife">洗衣服/收拾房间（选 1 项）</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 计划编辑器 -->
+        <div class="editor" id="planEditor" style="display:none;">
+            <div style="font-size: 18px; font-weight: bold; color: #856404; margin-bottom: 15px;">✏️ 编辑今日计划</div>
+            <label>📚 学习计划（可以改章节数/内容）</label>
+            <textarea id="planStudyInput">第 122-124 章（共 3 章）</textarea>
+            <label>📝 英语学习（考完可删除）</label>
+            <textarea id="planEnglishInput">听力练习 30 分钟</textarea>
+            <label>🏠 生活任务</label>
+            <textarea id="planLifeInput">洗衣服/收拾房间（选 1 项）</textarea>
+            <label>💡 弹性说明（课长课短的提醒）</label>
+            <textarea id="planNoteInput">课长课短都算完成，完成计划就是胜利！</textarea>
+            <button onclick="savePlan()">💾 保存计划</button>
+            <button class="cancel-btn" onclick="closePlanEditor()">取消</button>
+        </div>
+        
         <!-- 财管课程进度条 -->
         <div class="course-progress-section" id="courseProgressSection">
             <button class="toggle-btn" onclick="toggleCourseProgress()">隐藏课程进度</button>
-            <h3>📚 会计课程进度</h3>
+            <h3>📚 财管课程进度</h3>
             <div style="font-size: 16px; color: #666; margin-bottom: 10px;">
                 已学 <span id="learnedChapters" style="font-weight: bold; color: #ff6b6b;">121</span> / 总共 <span style="font-weight: bold;">161</span> 章
             </div>
@@ -86,25 +130,26 @@
         </div>
         
         <div class="editor">
-            <div style="font-size: 18px; font-weight: bold; color: #856404; margin-bottom: 15px;">✏️ 今天想怎么学，宁宝说了算！</div>
-            <button class="editor-btn" onclick="toggleEditor()">编辑今日计划（宁宝自由权）</button>
-            <div class="editor-panel" id="editorPanel">
-                <label>📚 学习必做任务</label>
-                <textarea id="studyTasks">1. 会计听课 2-3 章（每章约 1 小时）
-2. 财管习题 对应章节练习（每章 0.5-1 小时）
-3. 六级保持 30 分钟（听力/阅读轮换）</textarea>
+            <div style="font-size: 18px; font-weight: bold; color: #856404; margin-bottom: 15px;">✏️ 编辑任务清单（宁宝自由权）</div>
+            <button class="editor-btn" onclick="toggleTaskEditor()">编辑今日任务清单</button>
+            <div class="editor-panel" id="taskEditorPanel">
+                <label>📚 学习必做任务（完成打勾）</label>
+                <textarea id="studyTasks">1. 财管第 122 章
+2. 财管第 123 章
+3. 财管第 124 章
+4. 六级听力 30 分钟</textarea>
                 <label>🏠 生活必做任务</label>
                 <textarea id="lifeTasks">1. 洗衣服/收拾房间（选 1 项）
 2. 好好吃饭 + 休息（必须！）</textarea>
                 <label>✨ 备选池（无限·随缘完成）</label>
-                <textarea id="optionalTasks">- 额外会计复习 / 错题整理
+                <textarea id="optionalTasks">- 额外财管复习 / 错题整理
 - 六级作文 / 翻译练习
 - 导师任务（白天不定时）
 - 其他琐事</textarea>
                 <label>💖 今日鼓励语</label>
-                <textarea id="encouragementText">宁宁真棒！完成任意任务就夸夸自己，你超厉害的～</textarea>
-                <button onclick="saveCustomPlan()">💾 保存今日计划</button>
-                <button class="cancel-btn" onclick="toggleEditor()">取消</button>
+                <textarea id="encouragementText">宁宁真棒！完成计划内的任务就夸夸自己！</textarea>
+                <button onclick="saveTaskPlan()">💾 保存任务清单</button>
+                <button class="cancel-btn" onclick="toggleTaskEditor()">取消</button>
             </div>
         </div>
         
@@ -115,10 +160,10 @@
         </div>
         
         <div id="tasks">
-            <div class="section-title">📚 学习必做（今日核心）</div>
+            <div class="section-title">📚 学习必做（完成打勾）</div>
             <div id="studyList"></div>
             
-            <div class="section-title">🏠 生活必做（最多 2 项）</div>
+            <div class="section-title">🏠 生活必做</div>
             <div id="lifeList"></div>
             
             <div class="section-title">✨ 备选池（无限·随缘完成）</div>
@@ -141,9 +186,9 @@
             
             <div class="tips">
                 <strong>💖 宁宝小贴士：</strong><br>
-                <span id="tip1">宁宁真棒！完成任意任务就夸夸自己！</span><br>
+                <span id="tip1">宁宁真棒！完成计划内的任务就夸夸自己！</span><br>
                 宁宝情绪不好就休息，开心最重要！<br>
-                不要看时间，按自己的状态来！
+                课长课短都算完成，完成计划就是胜利！
             </div>
             
             <button class="emergency-btn" onclick="emergencyMode()">🆘 今天状态不好？点击启用应急模式</button>
@@ -161,17 +206,51 @@
             '宁宝真棒！CPA 证书在向你招手！'
         ];
         
-        // 显示日期
         const now = new Date();
         document.getElementById('date').textContent = now.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' });
         
-        // 判断休息日
         const day = now.getDay();
         if (day === 0 || day === 2) {
             document.getElementById('rest').style.display = 'block';
         }
         
         const today = now.toDateString();
+        
+        // 加载计划
+        function loadPlan() {
+            const saved = localStorage.getItem('ningbao_plan_' + today);
+            if (saved) {
+                const plan = JSON.parse(saved);
+                document.getElementById('planStudy').textContent = plan.study || '第 122-124 章（共 3 章）';
+                document.getElementById('planEnglish').textContent = plan.english || '听力练习 30 分钟';
+                document.getElementById('planLife').textContent = plan.life || '洗衣服/收拾房间（选 1 项）';
+                document.getElementById('planNoteInput').value = plan.note || '课长课短都算完成，完成计划就是胜利！';
+            }
+        }
+        
+        function openPlanEditor() {
+            document.getElementById('planEditor').style.display = 'block';
+            document.getElementById('planStudyInput').value = document.getElementById('planStudy').textContent;
+            document.getElementById('planEnglishInput').value = document.getElementById('planEnglish').textContent;
+            document.getElementById('planLifeInput').value = document.getElementById('planLife').textContent;
+        }
+        
+        function closePlanEditor() {
+            document.getElementById('planEditor').style.display = 'none';
+        }
+        
+        function savePlan() {
+            const plan = {
+                study: document.getElementById('planStudyInput').value,
+                english: document.getElementById('planEnglishInput').value,
+                life: document.getElementById('planLifeInput').value,
+                note: document.getElementById('planNoteInput').value
+            };
+            localStorage.setItem('ningbao_plan_' + today, JSON.stringify(plan));
+            loadPlan();
+            closePlanEditor();
+            alert('✅ 宁宝今日计划已更新！按照新计划执行吧～');
+        }
         
         // 加载财管课程进度
         function loadCourseProgress() {
@@ -220,21 +299,26 @@
             }
         }
         
-        // 加载自定义计划
+        // 加载任务清单
         let studyTasks, lifeTasks, optionalTasks, encouragementText;
-        const saved = localStorage.getItem('ningbao_custom_' + today);
+        const taskSaved = localStorage.getItem('ningbao_task_' + today);
         
-        if (saved) {
-            const plan = JSON.parse(saved);
+        if (taskSaved) {
+            const plan = JSON.parse(taskSaved);
             studyTasks = plan.study;
             lifeTasks = plan.life;
             optionalTasks = plan.optional;
             encouragementText = plan.encouragement;
         } else {
-            studyTasks = "1. 会计听课 2-2.5 章（每章约 1 小时）\n2. 会计习题 对应章节练习（每章 0.5-1 小时）\n3. 六级保持 30 分钟（听力/阅读轮换）";
+            const plan = localStorage.getItem('ningbao_plan_' + today);
+            let planStudyText = '第 122-124 章';
+            if (plan) {
+                planStudyText = JSON.parse(plan).study || '第 122-124 章';
+            }
+            studyTasks = "1. 财管" + planStudyText + "\n2. 六级听力 30 分钟";
             lifeTasks = "1. 洗衣服/收拾房间（选 1 项）\n2. 好好吃饭 + 休息（必须！）";
-            optionalTasks = "- 额外会计复习 / 错题整理\n- 六级作文 / 翻译练习\n- 导师任务（白天不定时）\n- 其他琐事";
-            encouragementText = "宁宁真棒！完成任意任务就夸夸自己，你超厉害的～";
+            optionalTasks = "- 额外财管复习 / 错题整理\n- 六级作文 / 翻译练习\n- 导师任务（白天不定时）\n- 其他琐事";
+            encouragementText = "宁宁真棒！完成计划内的任务就夸夸自己！";
         }
         
         function renderTasks() {
@@ -260,17 +344,17 @@
             loadProgress();
         }
         
-        function toggleEditor() {
-            document.getElementById('editorPanel').classList.toggle('active');
+        function toggleTaskEditor() {
+            document.getElementById('taskEditorPanel').classList.toggle('active');
         }
         
-        function saveCustomPlan() {
+        function saveTaskPlan() {
             studyTasks = document.getElementById('studyTasks').value;
             lifeTasks = document.getElementById('lifeTasks').value;
             optionalTasks = document.getElementById('optionalTasks').value;
             encouragementText = document.getElementById('encouragementText').value;
             
-            localStorage.setItem('ningbao_custom_' + today, JSON.stringify({
+            localStorage.setItem('ningbao_task_' + today, JSON.stringify({
                 study: studyTasks,
                 life: lifeTasks,
                 optional: optionalTasks,
@@ -278,8 +362,8 @@
             }));
             
             renderTasks();
-            toggleEditor();
-            alert('✅ 宁宝今日计划已保存！');
+            toggleTaskEditor();
+            alert('✅ 宁宝任务清单已保存！');
         }
         
         function updateProgress() {
@@ -334,12 +418,13 @@
         
         function emergencyMode() {
             if (confirm('🌸 宁宝应急模式：\n\n今天只做 10-20 分钟复习，其余时间休息。\n\n宁宁开心最重要！\n\n确定启用吗？')) {
-                alert('✅ 已启用！宁宝今天只需翻看网课 10-20 分钟，然后好好休息～');
+                alert('✅ 已启用！宁宝今天只需翻看课本 10-20 分钟，然后好好休息～');
             }
         }
         
         // 初始化
         loadCourseProgress();
+        loadPlan();
         renderTasks();
     </script>
 </body>
