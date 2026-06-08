@@ -77,7 +77,7 @@
             </div>
             <div class="plan-content" id="planContent">
                 <div class="plan-item">
-                    <strong>📚 财管</strong>：<span id="planStudy">第 122-124 章（共 3 章）</span>
+                    <strong>📚 会计</strong>：<span id="planStudy">第 122-124 章（共 3 章）</span>
                     <div class="plan-note">💡 课长课短都算完成，完成计划就是胜利！</div>
                 </div>
                 <div class="plan-item">
@@ -108,7 +108,7 @@
         <!-- 财管课程进度条 -->
         <div class="course-progress-section" id="courseProgressSection">
             <button class="toggle-btn" onclick="toggleCourseProgress()">隐藏课程进度</button>
-            <h3>📚 财管课程进度</h3>
+            <h3>📚 会计课程进度</h3>
             <div style="font-size: 16px; color: #666; margin-bottom: 10px;">
                 已学 <span id="learnedChapters" style="font-weight: bold; color: #ff6b6b;">121</span> / 总共 <span style="font-weight: bold;">161</span> 章
             </div>
@@ -135,8 +135,8 @@
             <div class="editor-panel" id="taskEditorPanel">
                 <label>📚 学习必做任务（完成打勾）</label>
                 <textarea id="studyTasks">1. 财管第 122 章
-2. 财管第 123 章
-3. 财管第 124 章
+2. 会计第 123 章
+3. 会计第 124 章
 4. 六级听力 30 分钟</textarea>
                 <label>🏠 生活必做任务</label>
                 <textarea id="lifeTasks">1. 洗衣服/收拾房间（选 1 项）
@@ -315,7 +315,7 @@
             if (plan) {
                 planStudyText = JSON.parse(plan).study || '第 122-124 章';
             }
-            studyTasks = "1. 财管" + planStudyText + "\n2. 六级听力 30 分钟";
+            studyTasks = "1. 会计" + planStudyText + "\n2. 六级听力 30 分钟";
             lifeTasks = "1. 洗衣服/收拾房间（选 1 项）\n2. 好好吃饭 + 休息（必须！）";
             optionalTasks = "- 额外财管复习 / 错题整理\n- 六级作文 / 翻译练习\n- 导师任务（白天不定时）\n- 其他琐事";
             encouragementText = "宁宁真棒！完成计划内的任务就夸夸自己！";
