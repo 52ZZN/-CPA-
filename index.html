@@ -75,130 +75,50 @@
         .empty-task { padding: 30px; text-align: center; color: #999; font-size: 16px; background: #f8f9fa; border-radius: 10px; }
         .empty-task strong { color: #ff6b6b; font-size: 18px; }
         
-        /* 🐱 解压猫猫样式 */
+        /* 🐱 罗猫样式 */
         .cat-container {
             position: fixed;
             bottom: 20px;
             right: 20px;
             z-index: 999;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: all 0.3s ease;
         }
         .cat-container:hover {
-            transform: scale(1.1);
+            transform: scale(1.05);
         }
         .cat-container:active {
             transform: scale(0.95);
         }
-        .cat-body {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #ffecd2, #fcb69f);
-            border-radius: 50%;
-            position: relative;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-            animation: catBreathe 2s ease-in-out infinite;
+        .cat-svg {
+            width: 120px;
+            height: 120px;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3));
         }
-        @keyframes catBreathe {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+        .cat-body-part {
+            transition: all 0.2s ease;
         }
-        .cat-ear {
-            position: absolute;
-            width: 0;
-            height: 0;
-            border-left: 10px solid transparent;
-            border-right: 10px solid transparent;
-            border-bottom: 20px solid #fcb69f;
-            top: -15px;
+        .cat-eye-pupil {
+            animation: catBlink 4s ease-in-out infinite;
         }
-        .cat-ear.left { left: 10px; transform: rotate(-15deg); }
-        .cat-ear.right { right: 10px; transform: rotate(15deg); }
-        .cat-eye {
-            position: absolute;
-            width: 12px;
-            height: 12px;
-            background: #333;
-            border-radius: 50%;
-            top: 25px;
-            animation: catBlink 3s ease-in-out infinite;
-        }
-        .cat-eye.left { left: 20px; }
-        .cat-eye.right { right: 20px; }
         @keyframes catBlink {
-            0%, 90%, 100% { transform: scaleY(1); }
-            95% { transform: scaleY(0.1); }
+            0%, 92%, 100% { transform: scaleY(1); }
+            96% { transform: scaleY(0.1); }
         }
-        .cat-nose {
-            position: absolute;
-            width: 8px;
-            height: 6px;
-            background: #ff6b6b;
-            border-radius: 50%;
-            top: 42px;
-            left: 50%;
-            transform: translateX(-50%);
+        .cat-tail {
+            animation: tailWag 2s ease-in-out infinite;
+            transform-origin: 20px 80px;
         }
-        .cat-mouth {
-            position: absolute;
-            width: 20px;
-            height: 10px;
-            border-bottom: 2px solid #333;
-            border-radius: 0 0 10px 10px;
-            top: 48px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        .cat-whisker {
-            position: absolute;
-            width: 25px;
-            height: 2px;
-            background: #333;
-            top: 45px;
-        }
-        .cat-whisker.left { left: -20px; }
-        .cat-whisker.right { right: -20px; }
-        .cat-paw {
-            position: absolute;
-            width: 20px;
-            height: 15px;
-            background: #ffecd2;
-            border-radius: 50%;
-            bottom: -5px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        .cat-bubble {
-            position: fixed;
-            background: white;
-            padding: 10px 15px;
-            border-radius: 15px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-            font-size: 14px;
-            z-index: 1000;
-            animation: bubbleFade 2s ease-out forwards;
-            pointer-events: none;
-        }
-        .cat-bubble::after {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            left: 20px;
-            border-left: 8px solid transparent;
-            border-right: 8px solid transparent;
-            border-top: 8px solid white;
-        }
-        @keyframes bubbleFade {
-            0% { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(-30px); }
+        @keyframes tailWag {
+            0%, 100% { transform: rotate(-10deg); }
+            50% { transform: rotate(10deg); }
         }
         .cat-jump {
-            animation: catJump 0.5s ease !important;
+            animation: catJump 0.6s ease !important;
         }
         @keyframes catJump {
-            0% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-            100% { transform: translateY(0); }
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-30px) scale(1.1); }
         }
         .cat-spin {
             animation: catSpin 0.8s ease !important;
@@ -206,6 +126,48 @@
         @keyframes catSpin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+        }
+        .cat-happy {
+            animation: catHappy 1s ease !important;
+        }
+        @keyframes catHappy {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2) rotate(10deg); }
+        }
+        .cat-bubble {
+            position: fixed;
+            background: white;
+            padding: 12px 18px;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-size: 14px;
+            z-index: 1000;
+            animation: bubbleFloat 2.5s ease-out forwards;
+            pointer-events: none;
+            border: 2px solid #f0e6d2;
+        }
+        .cat-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 30px;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 10px solid white;
+        }
+        @keyframes bubbleFloat {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-40px); }
+        }
+        .cat-heart {
+            position: absolute;
+            font-size: 20px;
+            animation: heartFloat 1.5s ease-out forwards;
+            pointer-events: none;
+        }
+        @keyframes heartFloat {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-50px) scale(1.5); }
         }
     </style>
 </head>
@@ -295,19 +257,67 @@
         <button class="emergency-btn" onclick="emergencyMode()">🆘 今天状态不好？点击启用应急模式</button>
     </div>
     
-    <!-- 🐱 解压猫猫 -->
-    <div class="cat-container" id="cat" onclick="petCat()" title="点我解压！">
-        <div class="cat-body">
-            <div class="cat-ear left"></div>
-            <div class="cat-ear right"></div>
-            <div class="cat-eye left"></div>
-            <div class="cat-eye right"></div>
-            <div class="cat-nose"></div>
-            <div class="cat-mouth"></div>
-            <div class="cat-whisker left"></div>
-            <div class="cat-whisker right"></div>
-            <div class="cat-paw"></div>
-        </div>
+    <!-- 🐱 暹罗猫 -->
+    <div class="cat-container" id="cat" onclick="petCat()" title="摸摸我解压～">
+        <svg class="cat-svg" viewBox="0 0 120 120">
+            <!-- 尾巴 -->
+            <g class="cat-tail">
+                <path d="M95 75 Q110 65 105 50 Q100 40 105 35" stroke="#f5deb3" stroke-width="8" fill="none" stroke-linecap="round"/>
+            </g>
+            
+            <!-- 身体 -->
+            <ellipse cx="60" cy="75" rx="35" ry="30" fill="#f5deb3" class="cat-body-part"/>
+            
+            <!-- 后腿 -->
+            <ellipse cx="40" cy="95" rx="12" ry="15" fill="#8b7355" class="cat-body-part"/>
+            <ellipse cx="80" cy="95" rx="12" ry="15" fill="#8b7355" class="cat-body-part"/>
+            
+            <!-- 前爪 -->
+            <ellipse cx="45" cy="98" rx="8" ry="10" fill="#8b7355" class="cat-body-part"/>
+            <ellipse cx="75" cy="98" rx="8" ry="10" fill="#8b7355" class="cat-body-part"/>
+            
+            <!-- 身体重点色 -->
+            <ellipse cx="60" cy="75" rx="25" ry="20" fill="#f5deb3" class="cat-body-part"/>
+            
+            <!-- 头部 -->
+            <circle cx="60" cy="45" r="28" fill="#f5deb3" class="cat-body-part"/>
+            
+            <!-- 耳朵 -->
+            <polygon points="40,30 35,10 50,25" fill="#8b7355" class="cat-body-part"/>
+            <polygon points="80,30 85,10 70,25" fill="#8b7355" class="cat-body-part"/>
+            <polygon points="42,28 39,15 50,26" fill="#ffb6c1" class="cat-body-part"/>
+            <polygon points="78,28 81,15 70,26" fill="#ffb6c1" class="cat-body-part"/>
+            
+            <!-- 脸部重点色 -->
+            <ellipse cx="60" cy="50" rx="18" ry="15" fill="#e8d5c4" class="cat-body-part"/>
+            
+            <!-- 眼睛 -->
+            <ellipse cx="50" cy="42" rx="7" ry="9" fill="#87ceeb" class="cat-body-part"/>
+            <ellipse cx="70" cy="42" rx="7" ry="9" fill="#87ceeb" class="cat-body-part"/>
+            <circle class="cat-eye-pupil" cx="50" cy="42" r="4" fill="#1a1a2e"/>
+            <circle class="cat-eye-pupil" cx="70" cy="42" r="4" fill="#1a1a2e"/>
+            <circle cx="52" cy="40" r="2" fill="white"/>
+            <circle cx="72" cy="40" r="2" fill="white"/>
+            
+            <!-- 鼻子 -->
+            <polygon points="60,52 55,58 65,58" fill="#ffb6c1" class="cat-body-part"/>
+            
+            <!-- 嘴巴 -->
+            <path d="M60 58 Q55 63 52 60" stroke="#1a1a2e" stroke-width="1.5" fill="none" class="cat-body-part"/>
+            <path d="M60 58 Q65 63 68 60" stroke="#1a1a2e" stroke-width="1.5" fill="none" class="cat-body-part"/>
+            
+            <!-- 胡须 -->
+            <line x1="45" y1="55" x2="25" y2="52" stroke="#1a1a2e" stroke-width="1" opacity="0.6"/>
+            <line x1="45" y1="58" x2="25" y2="58" stroke="#1a1a2e" stroke-width="1" opacity="0.6"/>
+            <line x1="45" y1="61" x2="25" y2="64" stroke="#1a1a2e" stroke-width="1" opacity="0.6"/>
+            <line x1="75" y1="55" x2="95" y2="52" stroke="#1a1a2e" stroke-width="1" opacity="0.6"/>
+            <line x1="75" y1="58" x2="95" y2="58" stroke="#1a1a2e" stroke-width="1" opacity="0.6"/>
+            <line x1="75" y1="61" x2="95" y2="64" stroke="#1a1a2e" stroke-width="1" opacity="0.6"/>
+            
+            <!-- 腮红 -->
+            <ellipse cx="42" cy="52" rx="5" ry="3" fill="#ffb6c1" opacity="0.5"/>
+            <ellipse cx="78" cy="52" rx="5" ry="3" fill="#ffb6c1" opacity="0.5"/>
+        </svg>
     </div>
     
     <!-- 完成鼓励弹窗 -->
@@ -349,7 +359,9 @@
             '喵～学习累了吗？休息一下吧！',
             '咕噜～宁宁加油哦！',
             '喵呜～ CPA 一定过！',
-            '🐾 摸摸猫猫，压力消消！'
+            '🐾 摸摸猫猫，压力消消！',
+            '喵～今天也辛苦啦！',
+            '💕 最喜欢宁宁了！'
         ];
         
         const now = new Date();
@@ -360,30 +372,43 @@
         // 🐱 摸猫函数
         function petCat() {
             const cat = document.getElementById('cat');
+            
+            // 随机台词气泡
             const bubble = document.createElement('div');
             bubble.className = 'cat-bubble';
             bubble.textContent = catMessages[Math.floor(Math.random() * catMessages.length)];
             
-            // 随机位置显示气泡
             const rect = cat.getBoundingClientRect();
             bubble.style.left = (rect.left - 20) + 'px';
-            bubble.style.top = (rect.top - 50) + 'px';
+            bubble.style.top = (rect.top - 60) + 'px';
             
             document.body.appendChild(bubble);
             
             // 随机动画
-            const animations = ['cat-jump', 'cat-spin'];
+            const animations = ['cat-jump', 'cat-spin', 'cat-happy'];
             const randomAnim = animations[Math.floor(Math.random() * animations.length)];
             cat.classList.add(randomAnim);
+            
+            // 爱心特效
+            for (let i = 0; i < 3; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.className = 'cat-heart';
+                    heart.textContent = '💕';
+                    heart.style.left = (rect.left + Math.random() * 80) + 'px';
+                    heart.style.top = (rect.top + Math.random() * 60) + 'px';
+                    document.body.appendChild(heart);
+                    setTimeout(() => heart.remove(), 1500);
+                }, i * 200);
+            }
             
             setTimeout(() => {
                 cat.classList.remove(randomAnim);
             }, 1000);
             
-            // 2 秒后移除气泡
             setTimeout(() => {
                 bubble.remove();
-            }, 2000);
+            }, 2500);
         }
         
         // 加载会计课程进度
