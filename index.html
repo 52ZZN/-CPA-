@@ -74,6 +74,139 @@
         
         .empty-task { padding: 30px; text-align: center; color: #999; font-size: 16px; background: #f8f9fa; border-radius: 10px; }
         .empty-task strong { color: #ff6b6b; font-size: 18px; }
+        
+        /* 🐱 解压猫猫样式 */
+        .cat-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 999;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .cat-container:hover {
+            transform: scale(1.1);
+        }
+        .cat-container:active {
+            transform: scale(0.95);
+        }
+        .cat-body {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #ffecd2, #fcb69f);
+            border-radius: 50%;
+            position: relative;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            animation: catBreathe 2s ease-in-out infinite;
+        }
+        @keyframes catBreathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .cat-ear {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 20px solid #fcb69f;
+            top: -15px;
+        }
+        .cat-ear.left { left: 10px; transform: rotate(-15deg); }
+        .cat-ear.right { right: 10px; transform: rotate(15deg); }
+        .cat-eye {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #333;
+            border-radius: 50%;
+            top: 25px;
+            animation: catBlink 3s ease-in-out infinite;
+        }
+        .cat-eye.left { left: 20px; }
+        .cat-eye.right { right: 20px; }
+        @keyframes catBlink {
+            0%, 90%, 100% { transform: scaleY(1); }
+            95% { transform: scaleY(0.1); }
+        }
+        .cat-nose {
+            position: absolute;
+            width: 8px;
+            height: 6px;
+            background: #ff6b6b;
+            border-radius: 50%;
+            top: 42px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .cat-mouth {
+            position: absolute;
+            width: 20px;
+            height: 10px;
+            border-bottom: 2px solid #333;
+            border-radius: 0 0 10px 10px;
+            top: 48px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .cat-whisker {
+            position: absolute;
+            width: 25px;
+            height: 2px;
+            background: #333;
+            top: 45px;
+        }
+        .cat-whisker.left { left: -20px; }
+        .cat-whisker.right { right: -20px; }
+        .cat-paw {
+            position: absolute;
+            width: 20px;
+            height: 15px;
+            background: #ffecd2;
+            border-radius: 50%;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .cat-bubble {
+            position: fixed;
+            background: white;
+            padding: 10px 15px;
+            border-radius: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            font-size: 14px;
+            z-index: 1000;
+            animation: bubbleFade 2s ease-out forwards;
+            pointer-events: none;
+        }
+        .cat-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 20px;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid white;
+        }
+        @keyframes bubbleFade {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-30px); }
+        }
+        .cat-jump {
+            animation: catJump 0.5s ease !important;
+        }
+        @keyframes catJump {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0); }
+        }
+        .cat-spin {
+            animation: catSpin 0.8s ease !important;
+        }
+        @keyframes catSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -82,7 +215,7 @@
         <p class="subtitle">弹性制 · 不焦虑 · 随心所欲 · 劳逸结合</p>
         <div class="date" id="date"></div>
         
-        <!-- 每日学习任务清单（最显眼） -->
+        <!-- 每日学习任务清单 -->
         <div class="task-section">
             <h2>📚 今日学习任务（<span id="todayChapterCount">2</span>章）</h2>
             <div class="task-summary">
@@ -162,6 +295,21 @@
         <button class="emergency-btn" onclick="emergencyMode()">🆘 今天状态不好？点击启用应急模式</button>
     </div>
     
+    <!-- 🐱 解压猫猫 -->
+    <div class="cat-container" id="cat" onclick="petCat()" title="点我解压！">
+        <div class="cat-body">
+            <div class="cat-ear left"></div>
+            <div class="cat-ear right"></div>
+            <div class="cat-eye left"></div>
+            <div class="cat-eye right"></div>
+            <div class="cat-nose"></div>
+            <div class="cat-mouth"></div>
+            <div class="cat-whisker left"></div>
+            <div class="cat-whisker right"></div>
+            <div class="cat-paw"></div>
+        </div>
+    </div>
+    
     <!-- 完成鼓励弹窗 -->
     <div class="congrats-modal" id="congratsModal">
         <div class="congrats-content">
@@ -192,10 +340,51 @@
             '宁宝真厉害！又向 CPA 迈进了一步！'
         ];
         
+        // 🐱 猫猫互动台词
+        const catMessages = [
+            '喵～宁宁摸摸头！',
+            '咕噜咕噜～好舒服！',
+            '喵呜～再摸一下嘛！',
+            '🐱 宁宁最棒啦！',
+            '喵～学习累了吗？休息一下吧！',
+            '咕噜～宁宁加油哦！',
+            '喵呜～ CPA 一定过！',
+            '🐾 摸摸猫猫，压力消消！'
+        ];
+        
         const now = new Date();
         document.getElementById('date').textContent = now.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' });
         
         const today = now.toDateString();
+        
+        // 🐱 摸猫函数
+        function petCat() {
+            const cat = document.getElementById('cat');
+            const bubble = document.createElement('div');
+            bubble.className = 'cat-bubble';
+            bubble.textContent = catMessages[Math.floor(Math.random() * catMessages.length)];
+            
+            // 随机位置显示气泡
+            const rect = cat.getBoundingClientRect();
+            bubble.style.left = (rect.left - 20) + 'px';
+            bubble.style.top = (rect.top - 50) + 'px';
+            
+            document.body.appendChild(bubble);
+            
+            // 随机动画
+            const animations = ['cat-jump', 'cat-spin'];
+            const randomAnim = animations[Math.floor(Math.random() * animations.length)];
+            cat.classList.add(randomAnim);
+            
+            setTimeout(() => {
+                cat.classList.remove(randomAnim);
+            }, 1000);
+            
+            // 2 秒后移除气泡
+            setTimeout(() => {
+                bubble.remove();
+            }, 2000);
+        }
         
         // 加载会计课程进度
         function loadCourseProgress() {
@@ -206,17 +395,14 @@
             document.getElementById('courseProgressFill').style.width = percent + '%';
             document.getElementById('courseProgressFill').textContent = percent + '%';
             
-            // 自动生成今日任务
             generateTodayTasks();
         }
         
-        // 生成今日任务
         function generateTodayTasks() {
             let learned = parseInt(localStorage.getItem('course_learned') || '121');
             const urgents = JSON.parse(localStorage.getItem('urgents_' + today) || '[]');
             const urgentCount = urgents.length;
             
-            // 计算今日任务：从已学章节的下一章开始，每日 2 章，减去突发事件数量
             let startChapter = learned + 1;
             let taskCount = Math.max(0, DAILY_GOAL - urgentCount);
             
@@ -227,7 +413,6 @@
                 endChapter = startChapter + i;
             }
             
-            // 更新显示
             if (tasks.length > 0) {
                 const chapterRange = tasks.length === 1 ? 
                     '第' + startChapter + '章' : 
@@ -239,13 +424,10 @@
                 document.getElementById('todayChapterCount').textContent = '0';
             }
             
-            // 保存今日任务
             localStorage.setItem('today_tasks_' + today, JSON.stringify(tasks));
-            
             renderTasks();
         }
         
-        // 渲染任务
         function renderTasks() {
             const tasks = JSON.parse(localStorage.getItem('today_tasks_' + today) || '[]');
             const studyList = document.getElementById('studyList');
@@ -263,7 +445,6 @@
             loadProgress();
         }
         
-        // 更新进度
         function updateChapterProgress() {
             const input = document.getElementById('chapterInput');
             const chapters = parseInt(input.value);
@@ -277,7 +458,6 @@
             }
         }
         
-        // 突发情况
         function loadUrgent() {
             const urgents = JSON.parse(localStorage.getItem('urgents_' + today) || '[]');
             const list = document.getElementById('urgentList');
@@ -293,7 +473,6 @@
         function addUrgent() {
             const input = document.getElementById('urgentInput');
             const text = input.value.trim();
-            console.log('添加突发事件:', text);
             if (text) {
                 const urgents = JSON.parse(localStorage.getItem('urgents_' + today) || '[]');
                 urgents.push(text);
@@ -316,7 +495,6 @@
             alert('✅ 已删除突发事件，学习任务已恢复～');
         }
         
-        // 输入框回车添加
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('urgentInput').addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
@@ -368,7 +546,6 @@
             document.getElementById('progress').textContent = percent + '%';
             document.getElementById('completedCount').textContent = checked;
             
-            // 检查是否全部完成
             if (checked === required.length && required.length > 0) {
                 showCongrats();
             }
